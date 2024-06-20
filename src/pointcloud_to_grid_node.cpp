@@ -36,17 +36,17 @@ class PointCloudToGrid : public rclcpp::Node
       if (param.get_name() == "mapi_topic_name")
       {
         grid_map.mapi_topic_name = param.as_string();
-        pub_igrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.mapi_topic_name, 10);
+        pub_igrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.mapi_topic_name, rclcpp::QoS(10).transient_local());
       }
       if (param.get_name() == "maph_topic_name")
       {
         grid_map.maph_topic_name = param.as_string();
-        pub_hgrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.maph_topic_name, 10);
+        pub_hgrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.maph_topic_name, rclcpp::QoS(10).transient_local());
       }
       if (param.get_name() == "cloud_in_topic")
       {
         cloud_in_topic = param.as_string();
-        sub_pc2_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(cloud_in_topic, 10, std::bind(&PointCloudToGrid::lidar_callback, this, std::placeholders::_1));
+        sub_pc2_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(cloud_in_topic, rclcpp::QoS(10).transient_local(), std::bind(&PointCloudToGrid::lidar_callback, this, std::placeholders::_1));
       }
       if (param.get_name() == "cell_size")
       {
@@ -121,9 +121,9 @@ public:
 
     grid_map.paramRefresh();
 
-    pub_igrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.mapi_topic_name, 10);
-    pub_hgrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.maph_topic_name, 10);
-    sub_pc2_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(cloud_in_topic, 10, std::bind(&PointCloudToGrid::lidar_callback, this, std::placeholders::_1));
+    pub_igrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.mapi_topic_name, rclcpp::QoS(10).transient_local());
+    pub_hgrid = this->create_publisher<nav_msgs::msg::OccupancyGrid>(grid_map.maph_topic_name, rclcpp::QoS(10).transient_local());
+    sub_pc2_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(cloud_in_topic, rclcpp::QoS(10).transient_local(), std::bind(&PointCloudToGrid::lidar_callback, this, std::placeholders::_1));
     callback_handle_ = this->add_on_set_parameters_callback(std::bind(&PointCloudToGrid::parametersCallback, this, std::placeholders::_1));
     RCLCPP_INFO_STREAM(this->get_logger(), "pointcloud_to_grid_node has been started.");
     RCLCPP_INFO_STREAM(this->get_logger(), "Subscribing to: " << cloud_in_topic.c_str());
