@@ -103,6 +103,7 @@ public:
     this->declare_parameter<float>("length_y", 30.0);
     this->declare_parameter<float>("intensity_factor", 1.0);
     this->declare_parameter<float>("height_factor", 1.0);
+    this->declare_parameter<double>("z_offset", z_offset);
     this->declare_parameter<bool>("verbose1", verbose1);
     this->declare_parameter<bool>("verbose2", verbose2);
 
@@ -116,6 +117,7 @@ public:
     this->get_parameter("length_y", grid_map.length_y);
     this->get_parameter("intensity_factor", grid_map.intensity_factor);
     this->get_parameter("height_factor", grid_map.height_factor);
+    this->get_parameter("z_offset", z_offset);
     this->get_parameter("verbose1", verbose1);
     this->get_parameter("verbose2", verbose2);
 
@@ -165,7 +167,7 @@ private:
             if (cell.x < grid_map.cell_num_x && cell.y < grid_map.cell_num_y)
             {
               ipoints[cell.y * grid_map.cell_num_x + cell.x] = p.intensity * grid_map.intensity_factor;
-              hpoints[cell.y * grid_map.cell_num_x + cell.x] = p.z * grid_map.height_factor;
+              hpoints[cell.y * grid_map.cell_num_x + cell.x] = (p.z + z_offset) * grid_map.height_factor;
             }
             else
             {
@@ -197,6 +199,7 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr sub_pc2_;
   OnSetParametersCallbackHandle::SharedPtr callback_handle_;
   std::string cloud_in_topic = "nonground";
+  double z_offset = 0.0;
   bool verbose1 = true, verbose2 = false;
   // nav_msgs::msg::OccupancyGrid::Ptr intensity_grid = std::make_shared<nav_msgs::msg::OccupancyGrid>();
   // nav_msgs::msg::OccupancyGrid::Ptr intensity_grid(new nav_msgs::msg::OccupancyGrid);
